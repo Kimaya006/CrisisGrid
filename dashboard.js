@@ -931,12 +931,7 @@ function initBroadcastListener(db, doc, onSnapshot) {
     // Show banner always (top strip)
     showBroadcastBanner(data.message, data.type, data.timestamp);
 
-    // Show popup only once per unique alert (compare timestamp)
-    const tsKey = data.timestamp?.seconds || data.message;
-    if (_lastShownAlertTime !== tsKey) {
-      _lastShownAlertTime = tsKey;
-      showAlertPopup(data.message, data.type, data.timestamp);
-    }
+   
   });
 }
 
