@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CrisisGrid — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="admin.css"/>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ── SIDEBAR ── -->
+  <div class="sidebar">
+
+    <div class="sidebar-top">
+      <div class="brand">
+        <div class="brand-icon">🛡️</div>
+        <div class="brand-text">
+          <div class="brand-name">CrisisGrid</div>
+          <div class="brand-sub">Admin Control Panel</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Analytics Strip -->
+    <div class="stats-strip">
+      <div class="stat-box">
+        <div class="s-num" id="stat-today">0</div>
+        <div class="s-lbl">Today</div>
+      </div>
+      <div class="stat-box">
+        <div class="s-num" id="stat-week">0</div>
+        <div class="s-lbl">This Week</div>
+      </div>
+      <div class="stat-box">
+        <div class="s-num" id="stat-total">0</div>
+        <div class="s-lbl">Total</div>
+      </div>
+      <div class="stat-box">
+        <div class="s-num" id="stat-flagged">0</div>
+        <div class="s-lbl">Flagged</div>
+      </div>
+    </div>
+
+    <!-- Top incident type + city -->
+    <div class="insight-strip">
+      <div class="insight-item">
+        <div class="insight-label">Most Common</div>
+        <div class="insight-val" id="insight-type">—</div>
+      </div>
+      <div class="insight-item">
+        <div class="insight-label">Most Affected</div>
+        <div class="insight-val" id="insight-city">—</div>
+      </div>
+    </div>
+
+    <!-- Sidebar Tabs -->
+    <div class="sidebar-tabs">
+      <button class="stab on" id="stab-reports" onclick="switchTab('reports')">📋 Reports</button>
+      <button class="stab" id="stab-users"   onclick="switchTab('users')">👥 Users</button>
+    </div>
+
+    <!-- Reports Panel -->
+    <div id="panel-reports" class="panel">
+      <div class="panel-filters">
+        <button class="pill on" onclick="filterReports(this,'all')">All</button>
+        <button class="pill" onclick="filterReports(this,'flagged')">🚩 Flagged</button>
+        <button class="pill" onclick="filterReports(this,'verified')">✅ Verified</button>
+        <button class="pill" onclick="filterReports(this,'under_review')">⏳ Review</button>
+        <button class="pill" onclick="filterReports(this,'rejected')">❌ Rejected</button>
+      </div>
+      <div id="reports-list"></div>
+    </div>
+
+    <!-- Users Panel -->
+    <div id="panel-users" class="panel" style="display:none">
+      <div id="users-list"></div>
+    </div>
+
+    <!-- Bottom: Admin info + actions -->
+    <div class="sidebar-bottom">
+      <button class="broadcast-btn" onclick="openBroadcast()">📢 Broadcast Alert</button>
+      <button class="export-btn"    onclick="exportCSV()">⬇️ Export CSV</button>
+      <div class="user-pill">
+        <div class="user-avatar" id="admin-avatar">A</div>
+        <div>
+          <div class="user-name" id="admin-name">Admin</div>
+          <div class="user-role">🛡️ Administrator</div>
+        </div>
+        <button id="logoutBtn" onclick="logoutUser()"><i class="fas fa-lock-open"></i> LOGOUT</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── MAP AREA ── -->
+  <div class="map-area">
+
+    <div class="topbar">
+      <div class="topbar-title">🛡️ Admin — <span>Live Crisis Map</span></div>
+      <div class="topbar-actions">
+        <button class="action-btn" onclick="toggleHeatmap()">🔥 Heatmap</button>
+        <button class="action-btn" onclick="resetMapView()">⊙ Reset View</button>
+      </div>
+    </div>
+
+    <div id="map" style="position:absolute;top:0;left:0;right:0;bottom:0;width:100%;height:100%;"></div>
+
+    <!-- Report detail popup -->
+    <div class="info-popup" id="info-popup">
+      <button class="popup-close" onclick="closePopup()">×</button>
+      <div class="popup-type"   id="popup-type"></div>
+      <div class="popup-loc"    id="popup-loc"></div>
+      <div class="popup-desc"   id="popup-desc"></div>
+      <div class="popup-meta"   id="popup-meta"></div>
+      <div class="popup-actions">
+        <button class="popup-btn verify"  onclick="updateStatus('verified')">✅ Verify</button>
+        <button class="popup-btn review"  onclick="updateStatus('under_review')">⏳ Review</button>
+        <button class="popup-btn reject"  onclick="updateStatus('rejected')">❌ Reject</button>
+        <button class="popup-btn delete"  onclick="deleteReport()">🗑️ Delete</button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Broadcast Modal -->
+<div class="modal-overlay" id="broadcast-modal" onclick="overlayClick(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">📢 Broadcast Alert</div>
+      <button class="modal-close" onclick="closeBroadcast()">×</button>
+    </div>
+    <div class="modal-label">Alert Type</div>
+    <div class="broadcast-types">
+      <div class="btype selected" data-type="warning"  onclick="selectBType(this)"><span>⚠️</span> Warning</div>
+      <div class="btype"          data-type="info"     onclick="selectBType(this)"><span>ℹ️</span> Info</div>
+      <div class="btype"          data-type="critical" onclick="selectBType(this)"><span>🚨</span> Critical</div>
+    </div>
+    <div class="modal-label">Message</div>
+    <textarea class="modal-textarea" id="broadcast-msg" placeholder="Type your alert message for all users..."></textarea>
+    <button class="modal-submit" onclick="sendBroadcast()">📢 Send to All Users</button>
+  </div>
+</div>
+
+<script>
+  window.initMap = window.initMap;
+  (function loadGoogleMaps() {
+    if (window.google && window.google.maps) { initMap(); return; }
+    const s = document.createElement('script');
+    s.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDN_0aseIisyG3raCeZYoNueppQXOSsxsc&callback=initMap&loading=async&v=weekly&libraries=visualization";
+    s.async = true;
+    s.defer = true;
+    document.head.appendChild(s);
+  })();
+</script>
+
+<script src="admin.js"></script>
+
+</body>
+</html>
