@@ -1,6 +1,6 @@
+
 // 🔑 GEMINI API KEY — Get from https://aistudio.google.com → paste AIza... key here
 const GEMINI_KEY = CONFIG.GEMINI_KEY;
-
 // 🔑 FIREBASE CONFIG
 const firebaseConfig = {
   apiKey:            "AIzaSyB6QdyAXSWkyJZxYZ-FmYodEf_CY-PsVik",
@@ -436,7 +436,7 @@ Give a concise, practical emergency response with:
 Keep response under 120 words. Be direct and actionable. Respond in English.`;
 
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyBbjxGe-YY0i60WF4YHbr5q4jBeFbt9ILY`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -737,7 +737,7 @@ async function sendGeminiMessage() {
 
 async function callGeminiChat(history) {
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyBbjxGe-YY0i60WF4YHbr5q4jBeFbt9ILY`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -842,14 +842,13 @@ async function sendChatMessage() {
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=AIzaSyBbjxGe-YY0i60WF4YHbr5q4jBeFbt9ILY`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ contents: chatHistory })
       }
     );
-
     if (!response.ok) {
       const errData = await response.json();
       throw new Error(errData?.error?.message || `HTTP ${response.status}`);
