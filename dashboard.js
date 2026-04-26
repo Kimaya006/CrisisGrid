@@ -1,5 +1,5 @@
 // 🔑 GEMINI API KEY — Get from https://aistudio.google.com → paste AIza... key here
-const GEMINI_KEY = "AIzaSyBbjxGe-YY0i60WF4YHbr5q4jBeFbt9ILY";
+const GEMINI_KEY = "AIzaSyCm0ox1uylw6E9-bdyW2InY32v29p2FhL0";
 
 // 🔑 FIREBASE CONFIG
 const firebaseConfig = {
